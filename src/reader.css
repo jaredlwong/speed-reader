@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.unread {
+  color: #adb5c4;
+}
+
+.read {
+  color: #000000;
+}
+  
+.content {
+  max-width: 600px;
+}
+
+.content img {
+  max-width: 600px;
+}
+
+.article {
+  width: 1000px;
+}

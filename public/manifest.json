@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "speed-reader",
+  "version": "1.0.0",
+  "description": "This extension will bold all the words on the current web page",
+  "permissions": ["activeTab", "scripting"],
+  "action": {},
+  "background": {
+    "service_worker": "js/background.js"
+  }
+}
