@@ -11,6 +11,14 @@
 .read {
   color: #000000;
 }
+
+.sentence {}
+.word {}
+
+.sentence_boundary {
+  display: none;
+}
+
   
 .content {
   max-width: 600px;

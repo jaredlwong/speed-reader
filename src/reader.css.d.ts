@@ -4,7 +4,10 @@ declare namespace ReaderCssNamespace {
     container: string;
     content: string;
     read: string;
+    sentence: string;
+    sentence_boundary: string;
     unread: string;
+    word: string;
   }
 }
 
