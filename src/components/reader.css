@@ -1,0 +1,13 @@
+@import 'tailwindcss/base';
+
+.unread {
+  @apply text-gray-400;
+}
+
+.read {
+  /* @apply text-black; */
+}
+
+.selected {
+  @apply inline-block border border-violet-400;
+}

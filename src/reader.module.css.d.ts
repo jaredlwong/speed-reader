@@ -1,5 +1,5 @@
-declare namespace ReaderCssNamespace {
-  export interface IReaderCss {
+declare namespace ReaderModuleCssNamespace {
+  export interface IReaderModuleCss {
     article: string;
     container: string;
     content: string;
@@ -11,9 +11,9 @@ declare namespace ReaderCssNamespace {
   }
 }
 
-declare const ReaderCssModule: ReaderCssNamespace.IReaderCss & {
+declare const ReaderModuleCssModule: ReaderModuleCssNamespace.IReaderModuleCss & {
   /** WARNING: Only available when `css-loader` is used without `style-loader` or `mini-css-extract-plugin` */
-  locals: ReaderCssNamespace.IReaderCss;
+  locals: ReaderModuleCssNamespace.IReaderModuleCss;
 };
 
-export = ReaderCssModule;
+export = ReaderModuleCssModule;

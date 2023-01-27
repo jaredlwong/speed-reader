@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from 'react-dom/client';
+import ReactDOM from "react-dom/client";
 import { sendReady, readerStream, Article } from "./messages";
 
-// const styles = require("./reader.css");
-import styles from './reader.css';
+// const styles2 = require("./reader.module.css");
+import styles from "./reader.module.css";
+
+// var styles = {
+//   container: 'container',
+//   unread: 'unread ',
+//   read: 'read ',
+//   sentence: 'sentence ',
+//   word: 'word ',
+//   sentence_boundary: 'sentence_boundary ',
+//   content: 'content ',
+//   article: 'article ',
+// }
 
 import { HighResolutionTimer } from "./timer";
 
-const tokenizer = require('sbd');
+const tokenizer = require("sbd");
 
 interface ReaderArticle {
-  numWords: number,
-  html: string,
+  numWords: number;
+  html: string;
 }
 
 function computeTimings(wpm: number, sentences: string[][], pauseTime: number): number[] {
   let totalTime = 0;
   const timings: number[] = [];
   const totalPauseTime = pauseTime * (sentences.length - 1);
-  const wordsPerMinuteIncludingPauses = wpm - (totalPauseTime / 60000);
+  const wordsPerMinuteIncludingPauses = wpm - totalPauseTime / 60000;
 
   for (const sentence of sentences) {
     for (const word of sentence) {
-      totalTime += (60000 / wordsPerMinuteIncludingPauses);
+      totalTime += 60000 / wordsPerMinuteIncludingPauses;
       timings.push(totalTime);
     }
     totalTime += pauseTime;
@@ -32,7 +43,7 @@ function computeTimings(wpm: number, sentences: string[][], pauseTime: number): 
 }
 
 function parseHTML(html: string): ReaderArticle {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.innerHTML = html;
 
   // nytimes
@@ -42,7 +53,7 @@ function parseHTML(html: string): ReaderArticle {
 
   let id = 0;
   const walker = document.createTreeWalker(div, NodeFilter.SHOW_TEXT);
-  const changes: { node: Text, parent: ParentNode | null, frag: DocumentFragment}[] = [];
+  const changes: { node: Text; parent: ParentNode | null; frag: DocumentFragment }[] = [];
   while (walker.nextNode()) {
     const node = walker.currentNode as Text;
     const parent = node.parentNode;
@@ -56,7 +67,7 @@ function parseHTML(html: string): ReaderArticle {
     });
     const frag = document.createDocumentFragment();
     for (const sentence of sentences) {
-      const sentenceSpan = document.createElement('span');
+      const sentenceSpan = document.createElement("span");
       sentenceSpan.classList.add(styles.sentence);
 
       const words = sentence.split(/(\s+)/);
@@ -71,10 +82,10 @@ function parseHTML(html: string): ReaderArticle {
 
           // frag.appendChild(document.createTextNode(word));
 
-          sentenceSpan.appendChild(document.createTextNode(word))
+          sentenceSpan.appendChild(document.createTextNode(word));
         } else {
-          const span = document.createElement('span');
-          span.setAttribute('id', `word-${id}`);
+          const span = document.createElement("span");
+          span.setAttribute("id", `word-${id}`);
           span.classList.add(styles.unread);
           span.classList.add(styles.word);
           span.textContent = word;
@@ -87,16 +98,16 @@ function parseHTML(html: string): ReaderArticle {
         }
       });
 
-      const span = document.createElement('span');
+      const span = document.createElement("span");
       span.classList.add(styles.sentence_boundary);
       sentenceSpan.appendChild(span);
 
       frag.appendChild(sentenceSpan);
       // frag.appendChild(document.createTextNode(' '));
     }
-    changes.push({node, parent, frag});
+    changes.push({ node, parent, frag });
   }
-  for (const {node, parent, frag} of changes) {
+  for (const { node, parent, frag } of changes) {
     parent?.replaceChild(frag, node);
   }
 
@@ -104,7 +115,7 @@ function parseHTML(html: string): ReaderArticle {
 }
 
 function timeout(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function convertWpmToMsw(wpm: number): number {
@@ -121,7 +132,7 @@ function convertWpmToMsw(wpm: number): number {
 async function markAsRead(wordsPerMinute: number) {
   const msPerWord = convertWpmToMsw(wordsPerMinute);
 
-  const elements = document.querySelectorAll(`.${styles.word}, .${styles.sentence_boundary}`)
+  const elements = document.querySelectorAll(`.${styles.word}, .${styles.sentence_boundary}`);
   let wordsRead = 0;
   const startTime = performance.now() - msPerWord;
   for (const el of elements) {
@@ -135,25 +146,25 @@ async function markAsRead(wordsPerMinute: number) {
       const elapsed = performance.now() - startTime;
       const expected = wordsRead * msPerWord;
       const diff = expected - elapsed;
-      console.log(diff)
+      console.log(diff);
       if (diff > 0) {
         await timeout(diff);
       }
       // await timeout(50);
     }
-  };
+  }
 
   // function processElements(i: number) {
   //   if (i >= numWords) {
   //     return; // stop the recursion when we reach the end of the list
   //   }
-  
+
   //   const elementId = `word-${i}`;
   //   const element = document.getElementById(elementId);
-  
+
   //   element?.classList.remove(styles.unread);
   //   element?.classList.add(styles.read);
-  
+
   //   setTimeout(() => {
   //     processElements(i + 1); // call the function again with the next element
   //   }, 50);
@@ -170,7 +181,7 @@ const Reader: React.FC = () => {
     readerStream.subscribe(([{ doc }, sender]) => {
       setDoc(doc);
       if (doc?.content) {
-        const newContent = parseHTML(doc.content)
+        const newContent = parseHTML(doc.content);
         setContent(newContent);
       }
     });
@@ -182,9 +193,9 @@ const Reader: React.FC = () => {
     if (content?.html) {
       markAsRead(400);
     }
-  }, [content])
+  }, [content]);
 
-      // {doc?.content && <div dangerouslySetInnerHTML={{ __html: doc.content }} />}
+  // {doc?.content && <div dangerouslySetInnerHTML={{ __html: doc.content }} />}
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -192,12 +203,12 @@ const Reader: React.FC = () => {
         {content && <div dangerouslySetInnerHTML={{ __html: content.html }} />}
       </div>
     </div>
-  )
-}
+  );
+};
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <React.StrictMode>
     <Reader />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
