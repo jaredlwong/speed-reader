@@ -18,7 +18,7 @@ import styles from "./reader.module.css";
 
 import { HighResolutionTimer } from "./timer";
 
-const tokenizer = require("sbd");
+import tokenizer from "sbd";
 
 interface ReaderArticle {
   numWords: number;
@@ -62,7 +62,7 @@ function parseHTML(html: string): ReaderArticle {
     // }
 
     const text = node.textContent;
-    const sentences: string[] = tokenizer.sentences(text, {
+    const sentences: string[] = tokenizer.sentences(text || "", {
       preserve_whitespace: true,
     });
     const frag = document.createDocumentFragment();
